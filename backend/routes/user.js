@@ -7,7 +7,7 @@ const router = express.Router();
 const {authMiddleware} = require("../middleware");
 
 const signupSchema = zod.object({
-    username : zod.string(),
+    username : zod.string().email(),
     firstName : zod.string(),
     lastName : zod.string(),
     password : zod.string()
@@ -19,9 +19,9 @@ const signinBody = zod.object({
 })
 
 const updateBody = zod.object({
-    password : string().optional(),
-    firstName : string().optional(),
-    lastName : string().optional()
+    password : zod.string().optional(),
+    firstName : zod.string().optional(),
+    lastName : zod.string().optional()
 })
 
 router.post("/signup",async (req,res)=>{
@@ -62,7 +62,7 @@ router.post("/signin",async(req,res)=>{
         })
     }
 
-    const user = await User.finOne({
+    const user = await User.findOne({
         username : req.body.username,
         password : req.body.password
     })
@@ -97,5 +97,27 @@ router.post("/",authMiddleware,async (req,res)=>{
     res.json({
         "message" : "Updated successfully"
     })
+})
+
+router.get("/bulk",async(req,res)=>{
+    filter = req.query.filter || "";
+    const users = await User.find({
+        $or : [
+            {
+                firstName : { "$regex" : filter }
+            },
+            {
+                lastName : { "$regex" : filter }
+            }
+        ]
+    })
+    res.json({
+        user : users.map(user => ({
+            username : user.username,
+            firstName : user.firstName,
+            lastName : user.lastName,
+            _id : user._id
+        }))
+    });
 })
 module.exports= router;
