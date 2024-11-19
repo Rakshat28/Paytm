@@ -1,10 +1,12 @@
 const express = require('express');
 const zod = require('zod');
 const {User} = require("../db")
+const {Account} = require("../db");
 const jwt = require("jsonwebtoken");
-const JWT_SECRET = require("../config"); 
+require('dotenv').config({ path: '../../.env' });
 const router = express.Router();
 const {authMiddleware} = require("../middleware");
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const signupSchema = zod.object({
     username : zod.string().email(),
@@ -36,15 +38,21 @@ router.post("/signup",async (req,res)=>{
     const user = await User.findOne({
         username : body.username
     });
-    if(user._id){
+    if(user){
         return res.json({
             "message" : "user already exists"
         });
     }
-
+    
     const dbUser = await User.create(body);
+
+    const userId = dbUser._id;
+    await Account.create({
+        userId,
+        balance : 1 + Math.random()*10000
+    })
     const token = jwt.sign({
-        userId : dbUser._id
+        userId 
     },JWT_SECRET);
     res.json({
         "message" : "User created successfully",
@@ -55,7 +63,7 @@ router.post("/signup",async (req,res)=>{
 
 router.post("/signin",async(req,res)=>{
     const body = req.body;
-    const {success} = signinBody.safeParse(body);
+    const {success,error} = signinBody.safeParse(body);
     if(!success){
         res.status(411).json({
             "message" : "Incorrect inputs"
@@ -75,10 +83,12 @@ router.post("/signin",async(req,res)=>{
        res.json({
         token : token
     })
-    }
-    res.status(411).json({
+    console.log("ho gaya");
+    }else{
+     res.status(411).json({
         "message" : "Error while loggin in "
     })
+    }
 
 })
 
