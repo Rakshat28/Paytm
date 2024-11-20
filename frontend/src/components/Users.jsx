@@ -21,8 +21,8 @@ export const Users = () => {
     const fetchCurrentUser = async () => {
       const userDetails = await getCurrentUser(token);
       setCurrentUser({
-        firstname: userDetails.firstname,
-        lastname: userDetails.lastname,
+        firstName: userDetails.firstName,
+        lastName: userDetails.lastName,
       });
     };
     fetchCurrentUser();
@@ -55,12 +55,12 @@ function User({ user }) {
       <div className="flex justify-center items-center">
         <div className="rounded-full h-10 w-10 flex justify-center items-center bg-slate-300">
           <img
-            src={`https://api.dicebear.com/9.x/initials/svg?seed=${user.firstname}`}
+            src={`https://api.dicebear.com/9.x/initials/svg?seed=${user.firstName}`}
             className="h-[90%] w-[90%] rounded-full"
           />
         </div>
         <div className="font-medium text-sm ml-2">
-          {user.firstname} {user.lastname}
+          {user.firstName} {user.lastName}
         </div>
       </div>
 
@@ -72,9 +72,9 @@ function User({ user }) {
               "/send?id=" +
                 user._id +
                 "&name=" +
-                user.firstname +
+                user.firstName +
                 "_" +
-                user.lastname
+                user.lastName
             )
           }
         />

@@ -26,7 +26,7 @@ const Signin = () => {
     }));
   }
 
-  async function hanldeClick() {
+  async function handleClick() {
     const token = await signin(formData.email, formData.password);
     if (token) {
       setToken(token);
@@ -60,7 +60,7 @@ const Signin = () => {
             name="password"
             value={formData.password}
           />
-          <Button label={"Sign in"} onClick={hanldeClick} />
+          <Button label={"Sign in"} onClick={handleClick} />
           <BottomWarning
             label={"Don't have an account? "}
             to={"/signup"}

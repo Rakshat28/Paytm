@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Heading from "../components/Heading";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { sendMoney } from "../services/operations/transactionApi";
 import { useRecoilValue } from "recoil";
 import { tokenAtom, userAtom } from "../store/atom";
@@ -14,7 +14,7 @@ const SendMoney = () => {
   const [amount, setAmount] = useState("");
   const [success, setSuccess] = useState(false);
   const user = useRecoilValue(userAtom);
-
+  const navigate = useNavigate();
   function handleChange(event) {
     setAmount(event.target.value);
   }
@@ -22,9 +22,11 @@ const SendMoney = () => {
   async function handleClick() {
     const response = await sendMoney(amount, id, token);
     console.log(response);
-    if (response === "Transfer successful") {
+    if (response.status === 200) {
+      console.log("transaction done");
       setAmount("");
       setSuccess(true);
+      navigate("/dashboard");
     } else {
       setSuccess(false);
     }
@@ -32,6 +34,7 @@ const SendMoney = () => {
 
   return (
     <div>
+      
       <Appbar user={user.firstname} />
       <div className="h-screen bg-slate-300 flex justify-center items-center">
         <div className="bg-white rounded-lg w-[80%] sm:w-[50%] lg:w-[23%] text-center p-6">

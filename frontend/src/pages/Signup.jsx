@@ -26,7 +26,7 @@ const Signup = () => {
     }));
   }
 
-  async function hanldeClick(event) {
+  async function handleClick(event) {
     event.preventDefault();
     const response = await signup(
       formData.firstname,
@@ -81,7 +81,7 @@ const Signup = () => {
             value={formData.password}
             onChange={changeHandler}
           />
-          <Button label={"Sign up"} onClick={hanldeClick} />
+          <Button label={"Sign up"} onClick={handleClick} />
           <BottomWarning
             label={"Already have an account? "}
             to={"/signin"}
